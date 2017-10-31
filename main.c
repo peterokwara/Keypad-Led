@@ -1,12 +1,16 @@
 
 #define F_CPU 16000000UL
 
-#define keypadDirectionRegister DDRD
-#define keypadPortControl PORTD
-#define keypadPortValue PIND
+#define keypadDirectionRegisterR DDRB
+#define keypadPortControlR PORTB
+#define keypadPortValueR PINB
 
-#define LEDDirectionRegister DDRB
-#define LEDPort PORTB
+#define keypadDirectionRegisterC DDRC
+#define keypadPortControlC PORTC
+#define keypadPortValueC PINC
+
+#define LEDDirectionRegister DDRD
+#define LEDPort PORTD
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -18,9 +22,16 @@ int main(void){
     // Initialize LED
     LEDDirectionRegister = (1<<0);
 
-    // Initialize the keypad data direction and port settings
-    keypadDirectionRegister = 0x0F;
-    keypadPortControl = 0xF0;
+    // // Initialize the keypad data direction and port settings
+    // keypadDirectionRegister = 0x0F;
+    // keypadPortControl = 0xF0;
+
+    keypadDirectionRegisterR = (1<<0) | (1<<1) | (1<<2) | (1<<3);
+    keypadDirectionRegisterC = (0<<0) | (0<<1) | (0<<2) | (0<<3);
+
+    keypadPortControlR = (0<<0) | (0<<1) | (0<<2) | (0<<3);
+    keypadPortControlC = (1<<0) | (1<<1) | (1<<2) | (1<<3);
+
 
     while(1){
         keypadScan();
@@ -29,19 +40,27 @@ int main(void){
 }
 
 void keypadScan(){
-    if (keypadPortValue == 0xF0){
-        return;
-    }
-
+    // uint8_t mask = 0b11110000;
+    // uint8_t temp_1 = keypadPortValueC | (0<<0) | (0<<1) | (0<<2) | (0<<3);
+    // if (temp_1 == mask){
+    //     return;
+    // }
     // _delay_ms(50);
+    uint8_t keyPressCodeC = keypadPortValueC;
 
-    uint8_t keyPressCode = keypadPortValue;
-    keypadDirectionRegister ^= 0xFF;
-    keypadPortControl ^= 0xFF;
+    keypadDirectionRegisterC ^= (1<<0) | (1<<1) | (1<<2) | (1<<3);
+    keypadDirectionRegisterR ^= (1<<0) | (1<<1) | (1<<2) | (1<<3); 
+
+    keypadPortControlC ^= (1<<0) | (1<<1) | (1<<2) | (1<<3);
+    keypadPortControlR ^= (1<<0) | (1<<1) | (1<<2) | (1<<3);
+    
     // asm volatile("nop");
     // asm volatile("nop");
     _delay_ms(50);
-    keyPressCode |= keypadPortValue;
+    int temp = keypadPortValueR;
+    uint8_t keyPressCodeR = temp << 4;
+
+    uint8_t keyPressCode = keyPressCodeC | keyPressCodeR;
 
     uint8_t blinkDuration = 0;
 
@@ -105,9 +124,9 @@ void keypadScan(){
     if (keyPressCode < 0xFF){
         int i;
         for (i = 0; i < blinkDuration; i++){
-            _delay_ms(500);
+            _delay_ms(50);
             LEDPort ^= (1<<0);
-            _delay_ms(500);
+            _delay_ms(50);
             LEDPort ^= (1<<0);
         }
     }

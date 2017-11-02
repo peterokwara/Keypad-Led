@@ -22,10 +22,7 @@ int main(void){
     // Initialize LED
     LEDDirectionRegister = (1<<0);
 
-    // // Initialize the keypad data direction and port settings
-    // keypadDirectionRegister = 0x0F;
-    // keypadPortControl = 0xF0;
-
+    // Keypad initialization
     keypadDirectionRegisterR = (1<<0) | (1<<1) | (1<<2) | (1<<3);
     keypadDirectionRegisterC = (0<<0) | (0<<1) | (0<<2) | (0<<3);
 
@@ -40,12 +37,8 @@ int main(void){
 }
 
 void keypadScan(){
-    // uint8_t mask = 0b11110000;
-    // uint8_t temp_1 = keypadPortValueC | (0<<0) | (0<<1) | (0<<2) | (0<<3);
-    // if (temp_1 == mask){
-    //     return;
-    // }
-    // _delay_ms(50);
+
+    // Store value for column
     uint8_t keyPressCodeC = keypadPortValueC;
 
     keypadDirectionRegisterC ^= (1<<0) | (1<<1) | (1<<2) | (1<<3);
@@ -54,15 +47,18 @@ void keypadScan(){
     keypadPortControlC ^= (1<<0) | (1<<1) | (1<<2) | (1<<3);
     keypadPortControlR ^= (1<<0) | (1<<1) | (1<<2) | (1<<3);
     
-    // asm volatile("nop");
-    // asm volatile("nop");
-    _delay_ms(50);
+    _delay_ms(5);
+
+    // Store value for row
     int temp = keypadPortValueR;
     uint8_t keyPressCodeR = temp << 4;
 
+    // Add value for column and row
     uint8_t keyPressCode = keyPressCodeC | keyPressCodeR;
 
     uint8_t blinkDuration = 0;
+
+    // Comparison and resultant action
 
     // Column one
     if(keyPressCode == 0b11101110){
@@ -120,7 +116,7 @@ void keypadScan(){
         blinkDuration = 16;
     }
 
-
+    // Toggles the led on and off
     if (keyPressCode < 0xFF){
         int i;
         for (i = 0; i < blinkDuration; i++){

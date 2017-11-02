@@ -1,6 +1,6 @@
 # Keyboard & Led
 
-This is a 4x4 keypad that blinks an led several times based on which key has been pressed. Built using an atmega328p, a 4x4 keypad, a resistor and led. The code runs on C. It shows the days, hours, minutes and seconds
+This is a 4x4 keypad that blinks an led several times based on which key has been pressed. Built using an atmega328p, a 4x4 keypad, a resistor and led. The code runs on C. 
 
 ## Getting Started
 
@@ -26,7 +26,7 @@ Set up the circuit as shown in the figure below
 
 A video of the code running
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=gOIRP3hROwc
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=DgLSUZ3092I
 " target="_blank"><p align="center"><img src="./Assets/WP_20171101_13_13_23_Pro.jpg" 
 alt="clock counting downwards"/></p></a>
 
